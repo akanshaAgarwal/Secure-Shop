@@ -31,8 +31,6 @@ export function Appbar(props) {
     <div className={classes.root}>
       <AppBar elevation={0} position="fixed" className={classes.appBarShift}>
         <Toolbar variant="dense" className={classes.toolbar}>
-          
-
           {/* <img src={} alt="logo" className={styles.imageIcon} /> */}
           <CustomTypography
             text="Secure Shop (CSCE - 689)"
@@ -41,6 +39,16 @@ export function Appbar(props) {
             fontSize="24px"
             marginLeft="20px"
           />
+          {console.log("hello", props.authenticated, props.name)}
+          {props.authenticated ? (
+            <CustomTypography
+              text={`Hi, ${props.name}`}
+              color="#fff"
+              fontWeight="bold"
+              fontSize="24px"
+              marginLeft="20px"
+            />
+          ) : null}
 
           {/* commented for now, can uncommet if required
            consists of a search bar and add panel button */}
@@ -100,8 +108,9 @@ export function Appbar(props) {
   );
 }
 const mapStateToProps = (state) => {
-  return{};
+  return {
+    authenticated: state.common_data.authenticated,
+    name: state.common_data.name,
+  };
 };
-export default connect(mapStateToProps, { })(
-  withStyles(Appbar_Style)(Appbar)
-);
+export default connect(mapStateToProps, {})(withStyles(Appbar_Style)(Appbar));

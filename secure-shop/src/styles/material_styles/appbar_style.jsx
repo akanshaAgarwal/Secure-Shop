@@ -2,8 +2,8 @@ import { fade } from "@material-ui/core/styles";
 export default (theme) => ({
   root: {
     flexGrow: 1,
-    padding:"0px",
-    margin:"0px"
+    padding: "0px",
+    margin: "0px",
   },
   marginStyles: {
     margin: theme.spacing(1),
@@ -19,7 +19,7 @@ export default (theme) => ({
     display: "flex",
     backgroundColor: "#000",
     padding: "0px",
-    margin: "0px"
+    margin: "0px",
   },
   iconShift: {
     display: "flex",
@@ -66,6 +66,6 @@ export default (theme) => ({
   },
   toolbar: {
     padding: "0px",
-    margin: "0px"
+    margin: "0px",
   },
 });

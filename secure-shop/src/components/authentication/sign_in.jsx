@@ -15,8 +15,10 @@ import Sign_In_Style from "../../styles/material_styles/sign_in_style";
 import { withStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
 import CustomTypography from "../custom_typography";
-import clsx from 'clsx';
+import clsx from "clsx";
 import axios from "axios";
+import history from "../../history";
+import { setStateAfterSubmit } from "../../redux/actions/common_actions";
 
 export function Sign_In(props) {
   const { classes, children, className, ...other } = props;
@@ -26,41 +28,47 @@ export function Sign_In(props) {
 
   const on_email_change = (e) => {
     setEmail(e.target.value);
-}
-const on_password_change = (e) => {
-    setPassword(e.target.value);}
+  };
+  const on_password_change = (e) => {
+    setPassword(e.target.value);
+  };
 
-  const submit_form = ()=>{
-
+  const submit_form = () => {
     try {
-       axios.post(`http://localhost:8080/sign-in?email=${email}&password=${password}`)
-      .then(response => console.log(response.data))
-      .catch(err => console.warn(err));
-      setEmail("");
-      setPassword("");
-      
-  } catch (error) {
-      console.log(error)
-  }
-  setEmail("");
-  setPassword("");
-console.log("done");
+      axios
+        .post(
+          `http://localhost:8080/sign-in?email=${email}&password=${password}`
+        )
+        .then((response) => {
+          console.log(response.data);
+          var data = response.data;
+          if (data["validUser"]) {
+            props.setStateAfterSubmit(email, password, data["name"], true);
+            setEmail("");
+            setPassword("");
 
-    
+            history.push("/Dashboard");
+          }
+        })
+        .catch((err) => console.warn(err));
+    } catch (error) {
+      console.log(error);
+    }
+    setEmail("");
+    setPassword("");
+    console.log("done");
   };
 
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
-        
-      <CustomTypography
-                  text="SIGN IN"
-                  color="#000"
-                  fontWeight="bold"
-                  fontSize="24px"
-                  
-                />
+        <CustomTypography
+          text="SIGN IN"
+          color="#000"
+          fontWeight="bold"
+          fontSize="24px"
+        />
         <form className={classes.form} noValidate>
           <TextField
             variant="outlined"
@@ -100,12 +108,11 @@ console.log("done");
             className={clsx(classes.submit, className)}
           >
             <CustomTypography
-                  text="Sign In"
-                  color="#fff"
-                  fontWeight="lighter"
-                  fontSize="16px"
-                  
-                />
+              text="Sign In"
+              color="#fff"
+              fontWeight="lighter"
+              fontSize="16px"
+            />
           </Button>
           <Grid container>
             <Grid item xs>
@@ -135,4 +142,6 @@ const mapStateToProps = (state) => {
   return {};
 };
 
-export default connect(mapStateToProps, {})(withStyles(Sign_In_Style)(Sign_In));
+export default connect(mapStateToProps, { setStateAfterSubmit })(
+  withStyles(Sign_In_Style)(Sign_In)
+);

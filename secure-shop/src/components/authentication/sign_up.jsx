@@ -15,11 +15,15 @@ import Sign_In_Style from "../../styles/material_styles/sign_in_style";
 import { withStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
 import CustomTypography from "../custom_typography";
-import clsx from 'clsx';
+import clsx from "clsx";
 import axios from "axios";
+import history from "../../history";
+import { setStateAfterSubmit } from "../../redux/actions/common_actions";
 
-const re_email = new RegExp(".+@.+\..+");
-const re_password = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})");
+const re_email = new RegExp(".+@.+..+");
+const re_password = new RegExp(
+  "^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})"
+);
 
 export function Sign_Up(props) {
   const { classes, children, className, ...other } = props;
@@ -28,72 +32,70 @@ export function Sign_Up(props) {
   const [password, setPassword] = React.useState("");
   const [password_confirm, setConfirmPassword] = React.useState("");
 
-
-
-
-  const submit_form = ()=>{
+  const submit_form = () => {
     var valid_email = false;
     var valid_password = false;
     var valid_name = false;
     var valid_confirm_password = false;
-    if(name!=="")
-    valid_name=true;
-    if(re_email.test(email)===true)
-    valid_email=true;
-    if(re_password.test(password)===true)
-    valid_password=true;
-    if(password===password_confirm)
-    valid_confirm_password=true;
+    if (name !== "") valid_name = true;
+    if (re_email.test(email) === true) valid_email = true;
+    if (re_password.test(password) === true) valid_password = true;
+    if (password === password_confirm) valid_confirm_password = true;
 
-    if(valid_name && valid_confirm_password && valid_email && valid_password){
-        
-        axios.post('http://localhost:8080/sign-up',
-            { "email":email,
-            "name":name,
-            "password":password,
-            "mobile":"8888888888",
-            "primeUser":false})
-            .then(response => console.log(response.data))
-            .catch(err => console.warn(err))
-        setConfirmPassword("");
-        setEmail("");
-        setName("");
-        setPassword("");
+    if (valid_name && valid_confirm_password && valid_email && valid_password) {
+      axios
+        .post("http://localhost:8080/sign-up", {
+          email: email,
+          name: name,
+          password: password,
+          mobile: "8888888888",
+          primeUser: false,
+        })
+        .then((response) => {
+          console.log(response.data);
+          var data = response.data;
+          if (data["userCreated"]) {
+            props.setStateAfterSubmit(email, password, name, true);
+            setConfirmPassword("");
+            setEmail("");
+            setName("");
+            setPassword("");
 
-        console.log("successful here");
+            history.push("/Dashboard");
+          }
+        })
+        .catch((err) => console.warn(err));
 
+      console.log("successful here");
     }
     console.log("successful");
-    
   };
 
   const on_name_change = (e) => {
-      setName(e.target.value);
-  }
+    setName(e.target.value);
+  };
   const on_email_change = (e) => {
     setEmail(e.target.value);
-}
-const on_password_change = (e) => {
+  };
+  const on_password_change = (e) => {
     setPassword(e.target.value);
-}
-const on_confirm_password_change = (e) => {
+  };
+  const on_confirm_password_change = (e) => {
     setConfirmPassword(e.target.value);
-}
+  };
 
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
-        
-      <CustomTypography
-                  text="SIGN UP"
-                  color="#000"
-                  fontWeight="bold"
-                  fontSize="24px"
-                  
-                />
+        <CustomTypography
+          text="SIGN UP"
+          color="#000"
+          fontWeight="bold"
+          fontSize="24px"
+        />
         <form className={classes.form} noValidate>
-        <TextField
+          <TextField
             variant="outlined"
             margin="normal"
             required
@@ -105,9 +107,9 @@ const on_confirm_password_change = (e) => {
             autoComplete="name"
             onChange={on_name_change}
             autoFocus
-            helperText={name===""?"Invalid":""}
+            helperText={name === "" ? "Invalid" : ""}
           />
-          
+
           <TextField
             variant="outlined"
             margin="normal"
@@ -119,8 +121,7 @@ const on_confirm_password_change = (e) => {
             name="email"
             autoComplete="email"
             onChange={on_email_change}
-            helperText={re_email.test(email)===true?"":"Invalid"}
-            
+            helperText={re_email.test(email) === true ? "" : "Invalid"}
           />
           <TextField
             variant="outlined"
@@ -134,7 +135,7 @@ const on_confirm_password_change = (e) => {
             id="password"
             autoComplete="current-password"
             onChange={on_password_change}
-            helperText={re_password.test(password)===true?"Strong":"Weak"}
+            helperText={re_password.test(password) === true ? "Strong" : "Weak"}
           />
           <TextField
             variant="outlined"
@@ -147,7 +148,11 @@ const on_confirm_password_change = (e) => {
             type="password"
             id="confirm_password"
             onChange={on_confirm_password_change}
-            helperText={password_confirm===password?"Matches the password":"Does not match the passowrd"}
+            helperText={
+              password_confirm === password
+                ? "Matches the password"
+                : "Does not match the passowrd"
+            }
           />
           {/* <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
@@ -161,14 +166,12 @@ const on_confirm_password_change = (e) => {
             className={clsx(classes.submit, className)}
           >
             <CustomTypography
-                  text="Sign Up"
-                  color="#fff"
-                  fontWeight="lighter"
-                  fontSize="16px"
-                  
-                />
+              text="Sign Up"
+              color="#fff"
+              fontWeight="lighter"
+              fontSize="16px"
+            />
           </Button>
-          
         </form>
       </div>
     </Container>
@@ -179,4 +182,6 @@ const mapStateToProps = (state) => {
   return {};
 };
 
-export default connect(mapStateToProps, {})(withStyles(Sign_In_Style)(Sign_Up));
+export default connect(mapStateToProps, { setStateAfterSubmit })(
+  withStyles(Sign_In_Style)(Sign_Up)
+);
