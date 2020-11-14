@@ -44,7 +44,7 @@ export function Sign_Up(props) {
 
     if (valid_name && valid_confirm_password && valid_email && valid_password) {
       axios
-        .post("http://localhost:8080/sign-up", {
+        .post("https://localhost:8443/sign-up", {
           email: email,
           name: name,
           password: password,

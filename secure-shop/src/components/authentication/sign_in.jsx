@@ -37,7 +37,7 @@ export function Sign_In(props) {
     try {
       axios
         .post(
-          `http://localhost:8080/sign-in?email=${email}&password=${password}`
+          `https://localhost:8443/sign-in?email=${email}&password=${password}`
         )
         .then((response) => {
           console.log(response.data);
@@ -46,8 +46,12 @@ export function Sign_In(props) {
             props.setStateAfterSubmit(email, password, data["name"], true);
             setEmail("");
             setPassword("");
+            // window.location.href = `http://localhost:9000?user=${email}`;
 
-            history.push("/Dashboard");
+            history.push(`/Duo?user=${email}`);
+            //   axios
+            //     .get(`http://localhost:9000?user=${email}`)
+            //     .then((response) => console.log(response));
           }
         })
         .catch((err) => console.warn(err));
