@@ -19,6 +19,7 @@ import clsx from "clsx";
 import axios from "axios";
 import history from "../../history";
 import { setStateAfterSubmit } from "../../redux/actions/common_actions";
+import zxcvbn from "zxcvbn";
 
 const re_email = new RegExp(".+@.+..+");
 const re_password = new RegExp(
@@ -135,7 +136,20 @@ export function Sign_Up(props) {
             id="password"
             autoComplete="current-password"
             onChange={on_password_change}
-            helperText={re_password.test(password) === true ? "Strong" : "Weak"}
+            helperText={
+              zxcvbn(password).score > 2
+                ? `Strong; Score = ${
+                    zxcvbn(password).score
+                  }; (Accepted Password)`
+                : `Weak; Score = ${
+                    zxcvbn(password).score
+                  }; (Need a score of > 2 to login)`
+            }
+          />
+          <progress
+            value={zxcvbn(password).score}
+            max="4"
+            style={{ width: "80%" }}
           />
           <TextField
             variant="outlined"
